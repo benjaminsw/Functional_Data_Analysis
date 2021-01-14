@@ -14,4 +14,6 @@ plot(df_1$Vancouver.Temperature.C,xlab="Days")
 # Extract the Vancouver precipitation data and plot it
 df_2 = as.data.frame(CanadianWeather$dailyAv)[,36:70]
 plot(df_2$Vancouver.Precipitation.mm,xlab="Days")
-
+# write out data to CSV
+df = as.data.frame(CanadianWeather$dailyAv)
+write.csv(df, "/cloud/project/labs/lab_01/CanadianWeather.csv")
