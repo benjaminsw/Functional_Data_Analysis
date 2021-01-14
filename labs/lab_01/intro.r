@@ -2,7 +2,8 @@
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(fda, psych)
 # Description of Canadian Weather data
-describe(CanadianWeather)
+data(CanadianWeather)
+summary(CanadianWeather)
 # Extract the temperature data of the 35 cities
 temp = CanadianWeather$dailyAv
 df_1 = as.data.frame(CanadianWeather$dailyAv)[,1:35]
@@ -13,3 +14,4 @@ plot(df_1$Vancouver.Temperature.C,xlab="Days")
 # Extract the Vancouver precipitation data and plot it
 df_2 = as.data.frame(CanadianWeather$dailyAv)[,36:70]
 plot(df_2$Vancouver.Precipitation.mm,xlab="Days")
+
