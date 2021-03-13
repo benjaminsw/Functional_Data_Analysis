@@ -82,10 +82,32 @@ the final smoothed data.
 
 '''
 
+dayrng = c(0,365)
+bbasis <- create.bspline.basis(dayrng,nbasis=n_basis,norder=4) 
+harmLfd = vec2Lfd(c(0,(2*pi/365)^2,0), c(0, 365))
+for(ilam in 1:length(lambdas)){
+  curv.fdPar = fdPar(bbasis,curv.Lfd,ilam)
+  # Set lambda
+  curv.fdPari = curv.fdPar
+  curv.fdPari$lambda = lambdas[ilam]
+  # Smooth
+  tempSmoothi = smooth.basis(daytime,t_mat,curv.fdPari)
+  # Record average gcv
+  mean.gcv[ilam] = mean(tempSmoothi$gcv)
+}
+# We can plot what we have
+plot(lambdas,mean.gcv,type='b',log='x')
 
-
-
-
+# Lets select the lowest of these and smooth
+best = which.min(mean.gcv)
+lambdabest = lambdas[best]
+curv.fdPar = fdPar(bbasis,curv.Lfd,lambdabest)
+# Set lambda
+curv.fdPari = curv.fdPar
+curv.fdPari$lambda = lambdas[lambdabest]
+# Smooth
+tempSmoothi_best = smooth.basis(daytime,t_mat,curv.fdPari)
+plot(tempSmoothi_best)
 
 
 '''(d) 
