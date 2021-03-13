@@ -204,7 +204,7 @@ tempfd$fdnames
 
 #'  We can also create fd objects by adding a basis and a coefficient array. Let's
 #'  make a random one, say
-
+nbasis = 21
 newcoefs = matrix(rgamma(nbasis*10,5,2),nbasis,10)
 newfd = fd(newcoefs,bbasis)
 

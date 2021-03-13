@@ -90,7 +90,7 @@ fb.values = eval.basis(day5,fbasis)
 dim(fb.values)
 plot(day5,fb.values[,1])
 plot(day5,fb.values[,2])
-
+plot(day5,fb.values[,3])
 #' Extract the first temperature record
 
 ex.temp = temp[,1]
