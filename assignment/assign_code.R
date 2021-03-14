@@ -81,7 +81,7 @@ Comment on the smoothness of the curves and provide graphs of GCV and
 the final smoothed data.
 
 '''
-
+# ref: http://faculty.bscb.cornell.edu/~hooker/FDA2008/Lecture7_refinery.R
 dayrng = c(0,365)
 bbasis <- create.bspline.basis(dayrng,nbasis=n_basis,norder=4) 
 harmLfd = vec2Lfd(c(0,(2*pi/365)^2,0), c(0, 365))
@@ -114,12 +114,26 @@ plot(tempSmoothi_best)
 Based on the appropriate harmonic acceleration penalty fit calculate and 
 plot the graphs of the first and second and derivatives of the curves.
 '''
+# first derivatives
+plot(deriv.fd(tempSmoothi_best$fd))
+
+# second derivatives
+plot(deriv.fd(tempSmoothi_best$fd,2))
 
 '''(e) 
 Conduct a un-penalized principal components analysis of these data. 
 How many components do you need to recover 80% of the variation? 
 Do the components appear satisfactory?
 '''
+bbasis<-create.bspline.basis(dayrng,norder=4,nbasis=4)
+harmfdPar     <- fdPar(bbasis, harmLfd, lambda=0)
+pinch.smooth<-smooth.basis(daytime,t_mat,bbasis)
+pinch.pca<-pca.fd(pinch.smooth$fd,nharm = 4)
+plot(pinch.pca$harmonics[1:4],lty=1)
+
+par(mfrow=c(1,1))
+plot(cumsum(pinch.pca$varprop),ylab="cumulative sum explained")
+abline(h=0.9)
 
 '''(f) 
 Try a smoothed PCA analysis from the raw data. 
