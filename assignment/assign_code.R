@@ -126,7 +126,7 @@ How many components do you need to recover 80% of the variation?
 Do the components appear satisfactory?
 '''
 bbasis<-create.bspline.basis(dayrng,norder=4,nbasis=4)
-harmfdPar     <- fdPar(bbasis, harmLfd, lambda=0)
+harmfdPar <- fdPar(bbasis, harmLfd, lambda=0)
 pinch.smooth<-smooth.basis(daytime,t_mat,bbasis)
 pinch.pca<-pca.fd(pinch.smooth$fd,nharm = 4)
 plot(pinch.pca$harmonics[1:4],lty=1)
