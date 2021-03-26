@@ -141,6 +141,37 @@ Choose the smoothing parameter by cross-validation.
 Plot the cross-validation curve. Plot the new smoothed principal components. 
 Does this appear to be more satisfactory than the unsmoothed version?
 '''
+#' ##1. pca.fd
+curv.Lfd = int2Lfd(2)
+bbasis = create.bspline.basis(dayrng,nbasis=4,norder=4) 
+tempSmooth = smooth.basis(daytime,t_mat,bbasis)
+tempfd = tempSmooth$fd
+pca.fdPar = fdPar(bbasis,curv.Lfd,1e4)
+#tempPCAsmooth = pca.fd(tempfd,nharm=6,harmfdPar=pca.fdPar)
+
+ilam = 1
+mean.gcv = NULL 
+lambdas = 10^(seq(2,6,0.5))
+for(ilam in 1:length(lambdas)){
+  #curv.fdPar = fdPar(bbasis,curv.Lfd,ilam)
+  # Set lambda
+  #curv.fdPari = curv.fdPar
+  #curv.fdPari$lambda = lambdas[ilam]
+  # Smooth
+  #tempSmoothi = smooth.basis(daytime,t_mat,curv.fdPari)
+  # Record average gcv
+  #mean.gcv[ilam] = mean(tempSmoothi$gcv)
+  
+  
+  
+  pca.fdPari = fdPar(bbasis,curv.Lfd,lambdas[ilam])
+  tempPCAsmoothi = pca.fd(tempfd,nharm=4,harmfdPar=pca.fdPari)
+  # compute mean of score?
+  Xmat.smoothi = tempPCAsmoothi$scores[,1:3]
+  mean.gcv[ilam] = mean(Xmat.smoothi)
+}
+# We can plot what we have
+plot(lambdas,mean.gcv,type='b',log='x')
 
 
 '''(g) 
@@ -155,3 +186,5 @@ but the penalized principal components might not be.
 You can just use the first 4 principal components in each case. 
 Ignore any "convergence" warning while executing the inprod function.
 '''
+# ref: https://mathworld.wolfram.com/OrthogonalMatrix.html
+# check: A%*%t(A) = I
