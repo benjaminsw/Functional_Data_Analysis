@@ -160,6 +160,7 @@ smooth_func <- smooth.basis(day_seq, as.matrix(df), saturated_basis)
 mean(smooth_func$gcv)
 # fit functional principal components analysis
 func_pca <- pca.fd(smooth_func$fd,nharm=10)
+non_smoothed_func_pca <- func_pca
 names(func_pca)
 func_pca$varprop
 #func_pca$values are the eigenvalues
@@ -220,6 +221,7 @@ plot(best_smooth)
 
 # fit functional principal components analysis
 func_pca <- pca.fd(best_smooth$fd,nharm=10)
+smoothed_func_pca <- func_pca
 names(func_pca)
 func_pca$varprop
 
@@ -249,5 +251,6 @@ title('Principle Component Functions')
 # principal components are orthogonal, but the penalized principal components might not be. You can
 # just use the first 4 principal components in each case. Ignore any "convergence" warning while
 # executing the inprod function. 
-inprod(best_smooth, best_smooth)
+non_smoothed_inprod <- inprod(non_smoothed_func_pca$harmonics, non_smoothed_func_pca$harmonics)
+smoothed_inprod <- inprod(smoothed_func_pca$harmonics, smoothed_func_pca$harmonics)
 # proof: inner product is 0

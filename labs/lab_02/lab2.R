@@ -36,6 +36,8 @@ bbasis = create.bspline.basis(dayrng,nbasis=21,norder=4) # or from Lab 1
 tempSmooth1 = smooth.basis(daytime,temp,bbasis)
 
 plot(tempSmooth1)
+temp_pca <- pca.fd(tempSmooth1$fd,nharm=4)
+inprod(temp_pca$harmonics, temp_pca$harmonics)
 ################################################################################
 #' #                           SMOOTHING FUNCTIONS
 ################################################################################
