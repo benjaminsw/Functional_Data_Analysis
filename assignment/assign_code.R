@@ -32,7 +32,7 @@ days_no <- nrow(df)
 # days sequence
 day_seq <- 1:days_no - 0.5
 # day range
-day_range = c(0,days_no)
+day_range <- c(0,days_no)
 # observed sampling
 obs_ticks <- seq(0,days_no,1)
 # create saturated knots 
@@ -57,9 +57,9 @@ plot(obs_ticks,basismat[,1],type = "l",col=1,lwd=3)
 for(i in 1:49) lines(obs_ticks,basismat[,i],type = "l",col=i+1,lwd=3)
 
 # range of lambdas to search for optimal
-lambdas = 10^seq(-10,10,by=0.5)    
+lambdas <- 10^seq(-10,10,by=0.5)    
 # keep track of generalized cross-validation (GCV) mean
-gcv_mean = rep(0,length(lambdas)) 
+gcv_mean <- rep(0,length(lambdas)) 
 # convert integer to linear differential operator and define the m-th order derivative penalty term
 int_to_linear_diff <- int2Lfd(2)
 
@@ -67,9 +67,9 @@ for(ilam in 1:length(lambdas)){
   # define a functional parameter object
   func_param_obj <- fdPar(saturated_basis, Lfdobj=int_to_linear_diff, lambda=lambdas[ilam])
   # smooth the data using the roughness penalty and smoothing parameter specified in 'func_param_obj' 
-  smooth_func = smooth.basis(day_seq, as.matrix(df), func_param_obj)
+  smooth_func <- smooth.basis(day_seq, as.matrix(df), func_param_obj)
   # record average gcv
-  gcv_mean[ilam] = mean(smooth_func$gcv)
+  gcv_mean[ilam] <- mean(smooth_func$gcv)
 }
 # We can plot what we have
 plot(lambdas, gcv_mean, type='b', log='x')
@@ -79,19 +79,19 @@ best <- which.min(gcv_mean)
 #best_lambda <- lambdas[best]
 best_func_param_obj <- fdPar(saturated_basis, Lfdobj=int_to_linear_diff, lambda=lambdas[best])
 # fit smooth functionn with the best lambda
-best_smooth = smooth.basis(day_seq, as.matrix(df), best_func_param_obj)
+best_smooth <- smooth.basis(day_seq, as.matrix(df), best_func_param_obj)
 plot(best_smooth)
 
 ##########################
-logl=seq(-5, 12, len=71)  
+logl <- seq(-5, 12, len=71)  
 range(exp(logl))
-gcv = rep(0,71)
+gcv <- rep(0,71)
 
 for(i in c(1:length(logl))){
-  lambda=exp(logl[i])
+  lambda <- exp(logl[i])
   
-  tD2fdPar = fdPar(saturated_basis,Lfdobj=int2Lfd(2),lambda=lambda)
-  tyfd = smooth.basis(day_seq, as.matrix(df),tD2fdPar)
+  tD2fdPar <- fdPar(saturated_basis,Lfdobj=int2Lfd(2),lambda=lambda)
+  tyfd <- smooth.basis(day_seq, as.matrix(df),tD2fdPar)
   
   gcv[i] = tyfd$gcv
 }
@@ -112,9 +112,9 @@ fourier_basis <- create.fourier.basis(day_range,45)
 # make a linear differential operator object from a vector
 fourier_diff_operator_obj <- vec2Lfd(c(0,(2*pi/365)^2,0), c(0, 365))
 # range of lambdas to search for optimal
-lambdas = 10^seq(-10,10,by=0.5)    
+lambdas <- 10^seq(-10,10,by=0.5)    
 # keep track of generalized cross-validation (GCV) mean
-gcv_mean = rep(0,length(lambdas)) 
+gcv_mean <- rep(0,length(lambdas)) 
 
 
 for(ilam in 1:length(lambdas)){
@@ -155,7 +155,7 @@ nbasis <- 45 #length(ticks) + norder - 2
 saturated_basis <- create.bspline.basis(day_range,nbasis,norder)
 #func_param_obj <- fdPar(saturated_basis, Lfdobj=int_to_linear_diff)
 # smooth the data using the roughness penalty and smoothing parameter specified in 'func_param_obj' 
-smooth_func = smooth.basis(day_seq, as.matrix(df), saturated_basis)
+smooth_func <- smooth.basis(day_seq, as.matrix(df), saturated_basis)
 # average gcv
 mean(smooth_func$gcv)
 # fit functional principal components analysis
@@ -171,7 +171,20 @@ plot(cumsum(func_pca$values[1:10])/sum(func_pca$values),xlab='Number of Componen
      ylab='cumulative variance explained',col=2,cex.lab=2,
      cex.axis=2,cex=2)
 abline(h=0.80)
+# plot mean function
+plot(func_pca$meanfd)
 
+# functional principal components
+pca_fd <- func_pca$harmonics
+pca_vals <- eval.fd(day_seq, pca_fd)
+# the top 4 FPCs
+dim(pca_vals) 
+# plot 4 pca
+par(mfrow=c(1,1),mar = c(8, 8, 4, 2))
+matplot(day_seq, pca_vals[,1:4], xlab='day', ylab='PCs',
+        lwd=4,lty=1,cex.lab=2.5,cex.axis=2.5,type='l')
+legend(0,-0.07,c('PC1','PC2','PC3','PC4'),col=1:4,lty=1,lwd=5)
+title('Principle Component Functions')
 
 # (f) Try a smoothed PCA analysis from the raw data. Choose the smoothing parameter
 # by cross-validation. Plot the cross-validation curve. Plot the new smoothed principal
@@ -183,9 +196,9 @@ abline(h=0.80)
 # make a linear differential operator object from a vector
 fourier_diff_operator_obj <- vec2Lfd(c(0,(2*pi/365)^2,0), c(0, 365))
 # range of lambdas to search for optimal
-lambdas = 10^seq(-10,10,by=0.5)    
+lambdas <- 10^seq(-10,10,by=0.5)    
 # keep track of generalized cross-validation (GCV) mean
-gcv_mean = rep(0,length(lambdas)) 
+gcv_mean <- rep(0,length(lambdas)) 
 for(ilam in 1:length(lambdas)){
   # define a functional parameter object
   func_param_obj <- fdPar(fourier_basis, Lfdobj=fourier_diff_operator_obj, lambda=lambdas[ilam]) #**bspline or fourior???
@@ -215,6 +228,20 @@ plot(cumsum(func_pca$values[1:10])/sum(func_pca$values),xlab='Number of Componen
      ylab='cumulative variance explained',col=2,cex.lab=2,
      cex.axis=2,cex=2)
 abline(h=0.80)
+# plot mean function
+plot(func_pca$meanfd)
+
+# functional principal components
+pca_fd <- func_pca$harmonics
+pca_vals <- eval.fd(day_seq, pca_fd)
+# the top 4 FPCs
+dim(pca_vals) 
+# plot 4 pca
+par(mfrow=c(1,1),mar = c(8, 8, 4, 2))
+matplot(day_seq, pca_vals[,1:4], xlab='day', ylab='PCs',
+        lwd=4,lty=1,cex.lab=2.5,cex.axis=2.5,type='l')
+legend(0,-0.07,c('PC1','PC2','PC3','PC4'),col=1:4,lty=1,lwd=5)
+title('Principle Component Functions')
 
 # (g) Provide a interpretation for the smoothed principal components
 
@@ -222,5 +249,5 @@ abline(h=0.80)
 # principal components are orthogonal, but the penalized principal components might not be. You can
 # just use the first 4 principal components in each case. Ignore any "convergence" warning while
 # executing the inprod function. 
-
+inprod(best_smooth, best_smooth)
 # proof: inner product is 0
