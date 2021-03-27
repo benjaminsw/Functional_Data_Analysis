@@ -70,7 +70,7 @@ curv.fdPar = fdPar(bbasis,curv.Lfd,lambdabest)
 # Set lambda
 curv.fdPari = curv.fdPar
 curv.fdPari$lambda = lambdas[lambdabest]
-# Smooth
+# fit smooth function with best lamda
 tempSmoothi_best = smooth.basis(daytime,t_mat,curv.fdPari)
 plot(tempSmoothi_best)
 
