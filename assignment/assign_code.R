@@ -252,7 +252,8 @@ title('Principle Component Functions')
 # just use the first 4 principal components in each case. Ignore any "convergence" warning while
 # executing the inprod function. 
 non_smoothed_inprod <- inprod(non_smoothed_func_pca$harmonics, non_smoothed_func_pca$harmonics)
-non_smoothed_inprod <- 1*(non_smoothed_inprod > 0.99)
+non_smoothed_second_min <- sort(non_smoothed_inprod , TRUE)[11]
+non_smoothed_inprod <- 1*(non_smoothed_inprod > non_smoothed_second_min)
 smoothed_inprod <- inprod(smoothed_func_pca$harmonics, smoothed_func_pca$harmonics)
-smoothed_inprod <- 1*(smoothed_inprod > 0.99)
+smoothed_inprod <- 1*(smoothed_inprod > non_smoothed_second_min)
 # proof: inner product is 0
