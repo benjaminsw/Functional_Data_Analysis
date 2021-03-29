@@ -89,7 +89,7 @@ mtempfd = mean.fd(tempfd)
 scores = tempPCAsmooth$scores
 PCs = tempPCAsmooth$harmonics
 
-?pca.fd
+# ?pca.fd
 plot(scores[,1:2])
 #'  Firstly, just the mean + PC1
 

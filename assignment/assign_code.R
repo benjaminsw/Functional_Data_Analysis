@@ -57,7 +57,7 @@ plot(obs_ticks,basismat[,1],type = "l",col=1,lwd=3)
 for(i in 1:49) lines(obs_ticks,basismat[,i],type = "l",col=i+1,lwd=3)
 
 # range of lambdas to search for optimal
-lambdas <- 10^seq(-10,10,by=0.5)    
+lambdas <- 10^seq(-5, 5,by=0.5)    
 # keep track of generalized cross-validation (GCV) mean
 gcv_mean <- rep(0,length(lambdas)) 
 # convert integer to linear differential operator and define the m-th order derivative penalty term
@@ -71,11 +71,13 @@ for(ilam in 1:length(lambdas)){
   # record average gcv
   gcv_mean[ilam] <- mean(smooth_func$gcv)
 }
-# We can plot what we have
-plot(lambdas, gcv_mean, type='b', log='x')
-
 # Lets select the lowest of these and smooth
 best <- which.min(gcv_mean)
+# We can plot what we have
+plot(lambdas, gcv_mean, type='b', log='x')
+# add line to plot
+abline(v=lambdas[best], col="blue")
+
 #best_lambda <- lambdas[best]
 best_func_param_obj <- fdPar(saturated_basis, Lfdobj=int_to_linear_diff, lambda=lambdas[best])
 # fit smooth functionn with the best lambda
@@ -83,9 +85,9 @@ best_smooth <- smooth.basis(day_seq, as.matrix(df), best_func_param_obj)
 plot(best_smooth)
 
 ##########################
-logl <- seq(-5, 12, len=71)  
+logl <- log(lambdas)
 range(exp(logl))
-gcv <- rep(0,71)
+gcv <- rep(0,length(lambdas))
 
 for(i in c(1:length(logl))){
   lambda <- exp(logl[i])
@@ -97,7 +99,7 @@ for(i in c(1:length(logl))){
 }
 
 # PLOT GCV of FIT versus log lambda
-plot(logl,gcv[1:71],type='l',cex.lab=1.5, lwd=4, 
+plot(logl,gcv[1:length(lambdas)],type='l',cex.lab=1.5, lwd=4, 
      xlab='log lambda',ylab='GCV', main="GCV(log.lambda)")
 #####################
 
@@ -125,11 +127,13 @@ for(ilam in 1:length(lambdas)){
   # record average gcv
   gcv_mean[ilam] <- mean(smooth_func$gcv)
 }
-# We can plot what we have
-plot(lambdas, gcv_mean, type='b', log='x')
-
 # Lets select the lowest of these and smooth
 best <- which.min(gcv_mean)
+# plot gcv
+plot(lambdas, gcv_mean, type='b', log='x')
+# add line to plot
+abline(v=lambdas[best], col="blue")
+
 #best_lambda <- lambdas[best]
 best_func_param_obj <- fdPar(saturated_basis, Lfdobj=int_to_linear_diff, lambda=lambdas[best])
 # fit smooth functionn with the best lambda
@@ -141,9 +145,11 @@ plot(best_smooth)
 
 # first derivatives
 plot(deriv.fd(best_smooth$fd))
+title('First Derivatives Plot')
 
 # second derivatives
 plot(deriv.fd(best_smooth$fd,2))
+title('Second Derivatives Plot')
 
 # (e) Conduct a un-penalized principal components analysis of these data. 
 # How many components do you need to recover 80% of the variation? 
@@ -159,21 +165,23 @@ smooth_func <- smooth.basis(day_seq, as.matrix(df), saturated_basis)
 # average gcv
 mean(smooth_func$gcv)
 # fit functional principal components analysis
-func_pca <- pca.fd(smooth_func$fd,nharm=10)
+func_pca <- pca.fd(smooth_func$fd,nharm=5)
 non_smoothed_func_pca <- func_pca
 names(func_pca)
 func_pca$varprop
 #func_pca$values are the eigenvalues
-plot(func_pca$values[1:8],xlab='component',ylab='variance',col="red",
+plot(func_pca$values[1:5],xlab='component',ylab='variance',col="red",
      cex.lab=1.5,cex.axis=1.5,cex=2)
 
 # plot the cumulative percentage explained total variations
-plot(cumsum(func_pca$values[1:10])/sum(func_pca$values),xlab='Number of Components',
+plot(cumsum(func_pca$values[1:5])/sum(func_pca$values),xlab='Number of Components',
      ylab='cumulative variance explained',col=2,cex.lab=2,
-     cex.axis=2,cex=2)
-abline(h=0.80)
+     cex.axis=2,cex=2, ylim = c(0,1))
+abline(h=0.80, col="blue")
 # plot mean function
 plot(func_pca$meanfd)
+# plot with one fpca
+plot(func_pca, harm=1)
 
 # functional principal components
 pca_fd <- func_pca$harmonics
@@ -182,15 +190,14 @@ pca_vals <- eval.fd(day_seq, pca_fd)
 dim(pca_vals) 
 # plot 4 pca
 par(mfrow=c(1,1),mar = c(8, 8, 4, 2))
-matplot(day_seq, pca_vals[,1:4], xlab='day', ylab='PCs',
-        lwd=4,lty=1,cex.lab=2.5,cex.axis=2.5,type='l')
-legend(0,-0.07,c('PC1','PC2','PC3','PC4'),col=1:4,lty=1,lwd=5)
+matplot(day_seq, pca_vals[,1:5], xlab='day', ylab='PCs',
+        lwd=4, lty=1, cex.lab=2.5, cex.axis=2.5, type='l')
+#legend(1, 0.15 , c('PC1','PC2','PC3','PC4'), col=1:4, lty=1, lwd=5)
 title('Principle Component Functions')
 
 # (f) Try a smoothed PCA analysis from the raw data. Choose the smoothing parameter
 # by cross-validation. Plot the cross-validation curve. Plot the new smoothed principal
 # components. Does this appear to be more satisfactory than the unsmoothed version?
-
 
 # create saturated fourier basis functions
 # fourier_basis <- create.fourier.basis(day_range,45)
@@ -208,25 +215,29 @@ for(ilam in 1:length(lambdas)){
   # record average gcv
   gcv_mean[ilam] <- mean(smooth_func$gcv)
 }
-# We can plot what we have
-plot(lambdas, gcv_mean, type='b', log='x')
-
 # Lets select the lowest of these and smooth
 best <- which.min(gcv_mean)
+# plot what we have
+plot(lambdas, gcv_mean, type='b', log='x')
+# add line to plot
+abline(v=lambdas[best], col="blue")
+title('GCV FPCA plot')
+
 #best_lambda <- lambdas[best]
 best_func_param_obj <- fdPar(saturated_basis, Lfdobj=int_to_linear_diff, lambda=lambdas[best])
 # fit smooth functionn with the best lambda
 best_smooth <- smooth.basis(day_seq, as.matrix(df), best_func_param_obj)
 plot(best_smooth)
+title('Optimal Smoothed PCA Plot')
 
 # fit functional principal components analysis
-func_pca <- pca.fd(best_smooth$fd,nharm=10)
+func_pca <- pca.fd(best_smooth$fd,nharm=5)
 smoothed_func_pca <- func_pca
 names(func_pca)
 func_pca$varprop
 
 # plot the cumulative percentage explained total variations
-plot(cumsum(func_pca$values[1:10])/sum(func_pca$values),xlab='Number of Components',
+plot(cumsum(func_pca$values[1:5])/sum(func_pca$values),xlab='Number of Components',
      ylab='cumulative variance explained',col=2,cex.lab=2,
      cex.axis=2,cex=2)
 abline(h=0.80)
@@ -240,9 +251,9 @@ pca_vals <- eval.fd(day_seq, pca_fd)
 dim(pca_vals) 
 # plot 4 pca
 par(mfrow=c(1,1),mar = c(8, 8, 4, 2))
-matplot(day_seq, pca_vals[,1:4], xlab='day', ylab='PCs',
+matplot(day_seq, pca_vals[,1:5], xlab='day', ylab='PCs',
         lwd=4,lty=1,cex.lab=2.5,cex.axis=2.5,type='l')
-legend(0,-0.07,c('PC1','PC2','PC3','PC4'),col=1:4,lty=1,lwd=5)
+#legend(0,-0.07,c('PC1','PC2','PC3','PC4'),col=1:4,lty=1,lwd=5)
 title('Principle Component Functions')
 
 # (g) Provide a interpretation for the smoothed principal components
@@ -251,9 +262,13 @@ title('Principle Component Functions')
 # principal components are orthogonal, but the penalized principal components might not be. You can
 # just use the first 4 principal components in each case. Ignore any "convergence" warning while
 # executing the inprod function. 
+
+# proof: inner product is I
 non_smoothed_inprod <- inprod(non_smoothed_func_pca$harmonics, non_smoothed_func_pca$harmonics)
-non_smoothed_second_min <- sort(non_smoothed_inprod , TRUE)[11]
+non_smoothed_second_min <- sort(non_smoothed_inprod , TRUE)[6]
 non_smoothed_inprod <- 1*(non_smoothed_inprod > non_smoothed_second_min)
+non_smoothed_inprod
 smoothed_inprod <- inprod(smoothed_func_pca$harmonics, smoothed_func_pca$harmonics)
 smoothed_inprod <- 1*(smoothed_inprod > non_smoothed_second_min)
-# proof: inner product is 0
+smoothed_inprod
+
