@@ -192,8 +192,17 @@ dim(pca_vals)
 par(mfrow=c(1,1),mar = c(8, 8, 4, 2))
 matplot(day_seq, pca_vals[,1:5], xlab='day', ylab='PCs',
         lwd=4, lty=1, cex.lab=2.5, cex.axis=2.5, type='l')
-#legend(1, 0.15 , c('PC1','PC2','PC3','PC4'), col=1:4, lty=1, lwd=5)
+legend("bottomright" , c('PC1','PC2','PC3','PC4'), col=1:4, lty=1, lwd=5,
+       inset=c(0,1), xpd=TRUE, horiz=TRUE, bty="n")
 title('Principle Component Functions')
+
+#plot FPCAs separately 
+par(mfrow=c(2,2))
+for(i in 1:4){
+  matplot(day_seq, pca_vals[,i], xlab='day', ylab=paste('PC_', i,''), col=i+1,
+        lwd=4, lty=1, cex.lab=2.5, cex.axis=2.5, type='l')
+  title(paste('Principle Component Functions ', i,''))
+}
 
 # (f) Try a smoothed PCA analysis from the raw data. Choose the smoothing parameter
 # by cross-validation. Plot the cross-validation curve. Plot the new smoothed principal
@@ -253,8 +262,17 @@ dim(pca_vals)
 par(mfrow=c(1,1),mar = c(8, 8, 4, 2))
 matplot(day_seq, pca_vals[,1:5], xlab='day', ylab='PCs',
         lwd=4,lty=1,cex.lab=2.5,cex.axis=2.5,type='l')
-#legend(0,-0.07,c('PC1','PC2','PC3','PC4'),col=1:4,lty=1,lwd=5)
+legend("bottomright" , c('PC1','PC2','PC3','PC4'), col=1:4, lty=1, lwd=5,
+       inset=c(0,1), xpd=TRUE, horiz=TRUE, bty="n")
 title('Principle Component Functions')
+
+#plot FPCAs separately 
+par(mfrow=c(2,2))
+for(i in 1:4){
+  matplot(day_seq, pca_vals[,i], xlab='day', ylab=paste('PC_', i,''), col=i+1,
+          lwd=4, lty=1, cex.lab=2.5, cex.axis=2.5, type='l')
+  title(paste('Principle Component Functions ', i,''))
+}
 
 # (g) Provide a interpretation for the smoothed principal components
 
