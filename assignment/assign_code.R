@@ -73,7 +73,7 @@ for(ilam in 1:length(lambdas)){
 }
 # Lets select the lowest of these and smooth
 best <- which.min(gcv_mean)
-# We can plot what we have
+# plot gcv
 plot(lambdas, gcv_mean, type='b', log='x')
 # add line to plot
 abline(v=lambdas[best], col="blue")
